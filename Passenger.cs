@@ -40,7 +40,13 @@ namespace AirplaneLoadingSimulation
             pathIndex = 0;
             var start = new Vector2(locationX, locationY);
             var end = new Vector2(seat.TargetLocationX, seat.TargetLocationY);
+
+            Trace.WriteLine("Starting path-planning.");
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             path = Navigation.FindPath(start, end);
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Trace.WriteLine("Path-planning took " + elapsedMs + " ms.");
         }
 
         public List<List<Node>> BuildGrid(Bitmap im)
@@ -55,7 +61,14 @@ namespace AirplaneLoadingSimulation
                 {
                     var pos = new Vector2(i, j);
                     var walkable = isNotBlack(im, i, j);
-                    var pixelNode = new Node(pos, walkable);
+                    float weight = walkable ? 1.0f : 0.0f;
+                    var gValue = im.GetPixel(i, j).G;
+                    if (gValue > 0 && gValue < 255 && walkable)
+                    {
+                        weight = 0.1f;
+                    }
+
+                    var pixelNode = new Node(pos, walkable, weight);
                     col.Add(pixelNode);
                 }
 

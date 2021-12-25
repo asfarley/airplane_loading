@@ -25,23 +25,42 @@ namespace AirplaneLoadingSimulation
         public int boardingRampXOffset = 40;
         public int boardingRampWidth = 20;
         public int airplaneTopWall = 20;
-        public int airplaneBottomWall = 75;
+        public int airplaneBottomWall = 70;
         public int chairDoorOffset = 10;
 
         public int Width;
         public int Height;
-        public int[,] OccupationGrid;
-
 
         public AirplaneSim(int nPassengers, int nSeats, int width, int height)
         {
             Width = width;
             Height = height;
-            OccupationGrid = new int[width, height];
-            GenerateSeats(20,4);
+            GenerateSeats(nSeats/4,4);
             GeneratePassengers(nPassengers);
             GenerateGeometry();
             AssignSeats();
+        }
+
+        public Bitmap DrawMap()
+        {
+            Bitmap im = new Bitmap(Width, Height);
+            Graphics graphics = Graphics.FromImage(im);
+
+            graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
+
+            graphics.FillRectangle(Brushes.LawnGreen, boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+
+            foreach (var l in Lines)
+            {
+                graphics.DrawLine(Pens.Black, l.x0, l.y0, l.x1, l.y1);
+            }
+
+            foreach (var s in Seats)
+            {
+                graphics.FillRectangle(Brushes.Black, s.locationX, s.locationY, s.width, s.height);
+            }
+
+            return im;
         }
 
         public Bitmap DrawSimulationState()
@@ -51,6 +70,8 @@ namespace AirplaneLoadingSimulation
 
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
+            graphics.FillRectangle(Brushes.LawnGreen, boardingRampXOffset, airplaneBottomWall, boardingRampWidth,  dividerHeight - airplaneBottomWall);
+
             foreach (var l in Lines)
             {
                 graphics.DrawLine(Pens.Black, l.x0, l.y0, l.x1, l.y1);
@@ -58,13 +79,13 @@ namespace AirplaneLoadingSimulation
 
             foreach (var p in Passengers)
             {
-                graphics.FillEllipse(Brushes.Blue, p.locationX, p.locationY, p.radius, p.radius);
+                graphics.FillEllipse(Brushes.Blue, p.locationX - p.radius/2, p.locationY - p.radius/2, p.radius, p.radius);
                 //graphics.DrawLine(Pens.Aqua,p.locationX,p.locationY, p.seat.locationX, p.seat.locationY);
             }
 
             foreach (var s in Seats)
             {
-                graphics.FillRectangle(Brushes.Gray, s.locationX, s.locationY, s.width, s.height);
+                graphics.FillRectangle(Brushes.Black, s.locationX, s.locationY, s.width, s.height);
             }
 
             return im;
@@ -76,7 +97,7 @@ namespace AirplaneLoadingSimulation
             {
                 var p = new Passenger();
                 p.radius = 8;
-                p.locationX = i * 10;
+                p.locationX = i * 10 + 10;
                 p.locationY = dividerHeight + 50;
                 p.speed = 1;
                 Passengers.Add(p);
@@ -91,7 +112,7 @@ namespace AirplaneLoadingSimulation
                 {
                     var s = new Seat();
                     s.locationX = boardingRampXOffset + chairDoorOffset + boardingRampWidth + i * 12;
-                    s.locationY = airplaneTopWall + j * 12 + ((j >= nAisles/2) ? 10 : 0);
+                    s.locationY = airplaneTopWall + j * 10 + ((j >= nAisles/2) ? 10 : 0);
                     s.height = 10;
                     s.width = 2;
                     Seats.Add(s);

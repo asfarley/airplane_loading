@@ -12,7 +12,10 @@ namespace AirplaneLoadingSimulation
 {
     public partial class Form1 : Form
     {
-        private AirplaneSim Sim = new AirplaneSim(1, 50, 550, 300);
+        private const int nPassengers = 2;
+        private const int nSeats = 100;
+
+        private AirplaneSim Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);
 
         private Bitmap im;
 
@@ -50,6 +53,15 @@ namespace AirplaneLoadingSimulation
         private void button3_Click(object sender, EventArgs e)
         {
             ActivateSim = false;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            ActivateSim = false;
+            Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);
+            im = Sim.DrawSimulationState();
+            simulationPictureBox.Image = im;
+            Sim.UpdateNavigation(im);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace AirplaneLoadingSimulation
         public int width;
         public int height;
 
-        public int TargetLocationX => locationX - 10;
-        public int TargetLocationY => locationY;
+        public int TargetLocationX => locationX - 4;
+        public int TargetLocationY => locationY + 4;
     }
 }
