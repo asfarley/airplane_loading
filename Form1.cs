@@ -12,7 +12,7 @@ namespace AirplaneLoadingSimulation
 {
     public partial class Form1 : Form
     {
-        private const int nPassengers = 2;
+        private const int nPassengers = 10;
         private const int nSeats = 100;
 
         private AirplaneSim Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);

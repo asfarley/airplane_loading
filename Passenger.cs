@@ -22,15 +22,26 @@ namespace AirplaneLoadingSimulation
 
         public Astar Navigation;
 
-        public void Move()
+        public void Move(List<Passenger> passengers)
         {
             var newPosition = path.ToArray()[pathIndex];
+
+            if (PositionIsOccupied(passengers, (int) newPosition.Center.X, (int) newPosition.Center.Y))
+            {
+                return;
+            }
+
             locationX = (int) newPosition.Center.X;
             locationY = (int) newPosition.Center.Y;
             if (pathIndex < path.Count - 1)
             {
                 pathIndex++;
             }
+        }
+
+        public bool PositionIsOccupied(List<Passenger> passengers, int x, int y)
+        {
+            return passengers.Any(p => Math.Abs(p.locationX - x) < 10 && Math.Abs(p.locationY - y) < 10);
         }
 
         public void UpdateNavigation(Bitmap im)

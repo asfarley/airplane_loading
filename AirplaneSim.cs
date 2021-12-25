@@ -44,7 +44,7 @@ namespace AirplaneLoadingSimulation
 
         public void DrawPathHints(Graphics graphics)
         {
-            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(255, 255, 255),90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(200, 255, 200),90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
 
 
             graphics.FillRectangle(new LinearGradientBrush(
@@ -93,7 +93,6 @@ namespace AirplaneLoadingSimulation
             foreach (var p in Passengers)
             {
                 graphics.FillEllipse(Brushes.Blue, p.locationX - p.radius/2, p.locationY - p.radius/2, p.radius, p.radius);
-                //graphics.DrawLine(Pens.Aqua,p.locationX,p.locationY, p.seat.locationX, p.seat.locationY);
             }
 
             foreach (var s in Seats)
@@ -222,9 +221,10 @@ namespace AirplaneLoadingSimulation
         {
             foreach (var p in Passengers)
             {
-                p.Move();
+                var listJustThis = new List<Passenger> { p };
+                var otherPassengers = Passengers.Except(listJustThis);
+                p.Move(otherPassengers.ToList());
             }
-
         }
 
         public void Update(Bitmap im)
