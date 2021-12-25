@@ -62,10 +62,12 @@ namespace AirplaneLoadingSimulation
                     var pos = new Vector2(i, j);
                     var walkable = isNotBlack(im, i, j);
                     float weight = walkable ? 1.0f : 0.0f;
-                    var gValue = im.GetPixel(i, j).G;
-                    if (gValue > 0 && gValue < 255 && walkable)
+                    var pixel = im.GetPixel(i, j);
+
+                    var hint = HintWeight(pixel.R, pixel.G, pixel.B);
+                    if (walkable && hint != 0.0f)
                     {
-                        weight = 0.1f;
+                        weight = hint;
                     }
 
                     var pixelNode = new Node(pos, walkable, weight);
@@ -90,6 +92,69 @@ namespace AirplaneLoadingSimulation
             var pixel = im.GetPixel(x, y);
             var isNotBlack = !(pixel.R == 0 && pixel.G == 0 && pixel.B == 0);
             return isNotBlack;
+        }
+
+        private float HintWeight(byte R, byte G, byte B)
+        {
+            var redIntensity = RedIntensity(R, G, B);
+            var greenIntensity = GreenIntensity(R, G, B);
+
+            if (redIntensity == 0.0 && greenIntensity == 0.0)
+            {
+                return 0.0f;
+            }
+
+            if (redIntensity > 0.0f && greenIntensity == 0.0f)
+            {
+                return 1.0f + redIntensity;
+            }
+
+            if (greenIntensity > 0.0f && greenIntensity == 0.0f)
+            {
+                return 1.0f/greenIntensity;
+            }
+
+            return 0.0f;
+        }
+
+        private float RedIntensity(byte R, byte G, byte B)
+        {
+            if (R == 255 && G == 255 && B == 255)
+            {
+                return 0.0f;
+            }
+
+            if (R == 0)
+            {
+                return 0.0f;
+            }
+
+            if (G == 0 && B == 0)
+            {
+                return R;
+            }
+
+            return 2 * R / (G + B);
+        }
+
+        private float GreenIntensity(byte R, byte G, byte B)
+        {
+            if (R == 255 && G == 255 && B == 255)
+            {
+                return 0.0f;
+            }
+
+            if (G == 0)
+            {
+                return 0.0f;
+            }
+
+            if (R == 0 && B == 0)
+            {
+                return G;
+            }
+
+            return 2 * G / (R + B);
         }
     }
 }

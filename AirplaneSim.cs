@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +42,18 @@ namespace AirplaneLoadingSimulation
             AssignSeats();
         }
 
+        public void DrawPathHints(Graphics graphics)
+        {
+            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(255, 255, 255),90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+
+
+            graphics.FillRectangle(new LinearGradientBrush(
+                new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(255, 255, 255),
+                Color.FromArgb(255, 0, 0), 0.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight));
+        }
+
         public Bitmap DrawMap()
         {
             Bitmap im = new Bitmap(Width, Height);
@@ -48,7 +61,7 @@ namespace AirplaneLoadingSimulation
 
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
-            graphics.FillRectangle(Brushes.LawnGreen, boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+            DrawPathHints(graphics);
 
             foreach (var l in Lines)
             {
@@ -70,7 +83,7 @@ namespace AirplaneLoadingSimulation
 
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
-            graphics.FillRectangle(Brushes.LawnGreen, boardingRampXOffset, airplaneBottomWall, boardingRampWidth,  dividerHeight - airplaneBottomWall);
+            DrawPathHints(graphics);
 
             foreach (var l in Lines)
             {

@@ -24,9 +24,10 @@ namespace AirplaneLoadingSimulation
         {
             InitializeComponent();
 
+            im = Sim.DrawMap();
+            Sim.UpdateNavigation(im);
             im = Sim.DrawSimulationState();
             simulationPictureBox.Image = im;
-            Sim.UpdateNavigation(im);
         }
 
         private void simulationTick_Tick(object sender, EventArgs e)
