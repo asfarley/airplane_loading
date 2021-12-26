@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using AStarSharp;
 
 namespace AirplaneLoadingSimulation
@@ -13,6 +14,7 @@ namespace AirplaneLoadingSimulation
     public class Passenger
     {
         public Seat seat;
+        public bool seated = false;
         public int locationX;
         public int locationY;
         public int radius;
@@ -24,6 +26,11 @@ namespace AirplaneLoadingSimulation
 
         public void Move(List<Passenger> passengers)
         {
+            if (pathIndex == path.Count - 1)
+            {
+                seated = true;
+            }
+
             var newPosition = path.ToArray()[pathIndex];
 
             if (PositionIsOccupied(passengers, (int) newPosition.Center.X, (int) newPosition.Center.Y))
@@ -41,10 +48,10 @@ namespace AirplaneLoadingSimulation
 
         public bool PositionIsOccupied(List<Passenger> passengers, int x, int y)
         {
-            return passengers.Any(p => Math.Abs(p.locationX - x) < 10 && Math.Abs(p.locationY - y) < 10);
+            return passengers.Any(p => !p.seated && Math.Abs(p.locationX - x) < 10 && Math.Abs(p.locationY - y) < 10);
         }
 
-        public void UpdateNavigation(Bitmap im)
+        public void UpdateNavigation(Bitmap im, Graphics g, PictureBox pic)
         {
             var grid = BuildGrid(im);
             Navigation = new Astar(grid);
@@ -54,7 +61,7 @@ namespace AirplaneLoadingSimulation
 
             Trace.WriteLine("Starting path-planning.");
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            path = Navigation.FindPath(start, end);
+            path = Navigation.FindPath(start, end, pic, g, im);
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Trace.WriteLine("Path-planning took " + elapsedMs + " ms.");
@@ -72,7 +79,7 @@ namespace AirplaneLoadingSimulation
                 {
                     var pos = new Vector2(i, j);
                     var walkable = isNotBlack(im, i, j);
-                    float weight = walkable ? 1.0f : 0.0f;
+                    float weight = 1.0f;
                     var pixel = im.GetPixel(i, j);
 
                     var hint = HintWeight(pixel.R, pixel.G, pixel.B);
@@ -115,12 +122,12 @@ namespace AirplaneLoadingSimulation
                 return 0.0f;
             }
 
-            if (redIntensity > 0.0f && greenIntensity == 0.0f)
+            if (redIntensity > greenIntensity)
             {
-                return 1.0f + redIntensity;
+                return 1.0f + 1.0f*redIntensity;
             }
 
-            if (greenIntensity > 0.0f && greenIntensity == 0.0f)
+            if (greenIntensity > redIntensity)
             {
                 return 1.0f/greenIntensity;
             }
@@ -145,7 +152,7 @@ namespace AirplaneLoadingSimulation
                 return R;
             }
 
-            return 2 * R / (G + B);
+            return 2.0f * R / (G + B);
         }
 
         private float GreenIntensity(byte R, byte G, byte B)
@@ -165,7 +172,7 @@ namespace AirplaneLoadingSimulation
                 return G;
             }
 
-            return 2 * G / (R + B);
+            return 2.0f * G / (R + B);
         }
     }
 }

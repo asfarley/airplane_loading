@@ -36,6 +36,7 @@ namespace AirplaneLoadingSimulation
             this.button3 = new System.Windows.Forms.Button();
             this.simulationTick = new System.Windows.Forms.Timer(this.components);
             this.button4 = new System.Windows.Forms.Button();
+            this.timerNavigation = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.simulationPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,6 +94,12 @@ namespace AirplaneLoadingSimulation
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // timerNavigation
+            // 
+            this.timerNavigation.Enabled = true;
+            this.timerNavigation.Interval = 500;
+            this.timerNavigation.Tick += new System.EventHandler(this.timerNavigation_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -118,6 +125,7 @@ namespace AirplaneLoadingSimulation
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Timer simulationTick;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Timer timerNavigation;
     }
 }
 

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Numerics;
+using System.Windows.Forms;
 
 namespace AStarSharp
 {
@@ -69,7 +71,7 @@ namespace AStarSharp
             Grid = grid;
         }
 
-        public Stack<Node> FindPath(Vector2 Start, Vector2 End)
+        public Stack<Node> FindPath(Vector2 Start, Vector2 End, PictureBox pic, Graphics im, Bitmap bmp)
         {
             Node start = new Node(new Vector2((int)(Start.X/Node.NODE_SIZE), (int) (Start.Y/Node.NODE_SIZE)), true);
             Node end = new Node(new Vector2((int)(End.X / Node.NODE_SIZE), (int)(End.Y / Node.NODE_SIZE)), true);
@@ -102,6 +104,12 @@ namespace AStarSharp
                             n.Cost = n.Weight + n.Parent.Cost;
                             OpenList.Add(n);
                             OpenList = OpenList.OrderBy(node => node.F).ToList<Node>();
+                            DrawPath(OpenList, im);
+                            pic.Image = bmp;
+                            //pic.Invalidate();
+                            //pic.Update();
+                            pic.Refresh();
+                            //Application.DoEvents();
                         }
                     }
                 }
@@ -122,6 +130,15 @@ namespace AStarSharp
                 temp = temp.Parent;
             } while (temp != start && temp != null) ;
             return Path;
+        }
+
+        private void DrawPath(List<Node> path, Graphics g)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                var n = path[i];
+                g.DrawRectangle(Pens.Red, n.Center.X, n.Center.Y, 2, 2);
+            }
         }
 		
         private List<Node> GetAdjacentNodes(Node n)

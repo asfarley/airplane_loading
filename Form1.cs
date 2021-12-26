@@ -12,7 +12,7 @@ namespace AirplaneLoadingSimulation
 {
     public partial class Form1 : Form
     {
-        private const int nPassengers = 10;
+        private const int nPassengers = 1;
         private const int nSeats = 100;
 
         private AirplaneSim Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);
@@ -23,17 +23,21 @@ namespace AirplaneLoadingSimulation
         public Form1()
         {
             InitializeComponent();
-
             im = Sim.DrawMap();
-            Sim.UpdateNavigation(im);
-            im = Sim.DrawSimulationState();
-            simulationPictureBox.Image = im;
+            
+        }
+
+        private void NavigateAndDraw()
+        {
+            Sim.UpdateNavigation(im, simulationPictureBox);
+            //im = Sim.DrawSimulationState();
+            //simulationPictureBox.Image = im;
         }
 
         private void simulationTick_Tick(object sender, EventArgs e)
         {
-            im = Sim.DrawSimulationState();
-            simulationPictureBox.Image = im;
+            //im = Sim.DrawSimulationState();
+            //simulationPictureBox.Image = im;
 
             if (ActivateSim)
             {
@@ -62,7 +66,13 @@ namespace AirplaneLoadingSimulation
             Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);
             im = Sim.DrawSimulationState();
             simulationPictureBox.Image = im;
-            Sim.UpdateNavigation(im);
+            Sim.UpdateNavigation(im, simulationPictureBox);
+        }
+
+        private void timerNavigation_Tick(object sender, EventArgs e)
+        {
+            NavigateAndDraw();
+            timerNavigation.Enabled = false;
         }
     }
 }

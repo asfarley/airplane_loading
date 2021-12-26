@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AirplaneLoadingSimulation
 {
@@ -39,19 +40,29 @@ namespace AirplaneLoadingSimulation
             GenerateSeats(nSeats/4,4);
             GeneratePassengers(nPassengers);
             GenerateGeometry();
-            AssignSeats();
+            //AssignSeats();
+
+            Passengers[0].locationX = 200;
+            Passengers[0].seat = Seats[99];
         }
 
         public void DrawPathHints(Graphics graphics)
         {
-            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(200, 255, 200),90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(255, 255, 255), 90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
 
+            //graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(0, 255, 0), 90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
 
             graphics.FillRectangle(new LinearGradientBrush(
                 new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
-                    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 0, 0), 0.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(0, 255, 0),
+                Color.FromArgb(255, 255, 255), 30.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
                 550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight));
+
+            //graphics.FillRectangle(new LinearGradientBrush(
+            //    new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+            //        550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(255, 0, 0),
+            //    Color.FromArgb(255, 0, 0), 0.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+            //    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight));
         }
 
         public Bitmap DrawMap()
@@ -190,6 +201,30 @@ namespace AirplaneLoadingSimulation
                 y1 = dividerHeight
             };
 
+            var pathWall = new Geometry
+            {
+                x0 = 210,
+                y0 = dividerHeight,
+                x1 = 210,
+                y1 = 299
+            };
+
+            var pathWall2 = new Geometry
+            {
+                x0 = 0,
+                y0 = 260,
+                x1 = 210,
+                y1 = 260
+            };
+
+            var pathWall3 = new Geometry
+            {
+                x0 = 400,
+                y0 = airplaneBottomWall,
+                x1 = 400,
+                y1 = airplaneTopWall
+            };
+
             Lines.Add(window1);
             Lines.Add(window2);
             Lines.Add(window3);
@@ -197,6 +232,9 @@ namespace AirplaneLoadingSimulation
             Lines.Add(wall1);
             Lines.Add(rampWall1);
             Lines.Add(rampWall2);
+            Lines.Add(pathWall);
+            Lines.Add(pathWall2);
+            Lines.Add(pathWall3);
         }
 
         public void AssignSeats()
@@ -208,11 +246,12 @@ namespace AirplaneLoadingSimulation
             }
         }
 
-        public void UpdateNavigation(Bitmap im)
+        public void UpdateNavigation(Bitmap im, PictureBox box)
         {
             foreach (var p in Passengers)
             {
-                p.UpdateNavigation(im);
+                var g = Graphics.FromImage(im);
+                p.UpdateNavigation(im, g, box);
             }
 
         }
