@@ -40,29 +40,26 @@ namespace AirplaneLoadingSimulation
             GenerateSeats(nSeats/4,4);
             GeneratePassengers(nPassengers);
             GenerateGeometry();
-            //AssignSeats();
-
-            Passengers[0].locationX = 200;
-            Passengers[0].seat = Seats[99];
+            AssignSeats();
         }
 
         public void DrawPathHints(Graphics graphics)
         {
-            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(255, 255, 255), 90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall-30, boardingRampWidth, dividerHeight - airplaneBottomWall + 30), Color.FromArgb(0, 255, 0), Color.FromArgb(255, 255, 255), 70.0f), boardingRampXOffset, airplaneBottomWall - 30, boardingRampWidth, dividerHeight - airplaneBottomWall + 30);
 
-            //graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall), Color.FromArgb(0, 255, 0), Color.FromArgb(0, 255, 0), 90.0f), boardingRampXOffset, airplaneBottomWall, boardingRampWidth, dividerHeight - airplaneBottomWall);
+            graphics.FillRectangle(new LinearGradientBrush(new Rectangle(boardingRampXOffset, airplaneTopWall + 20, 400, 10), Color.FromArgb(0, 255, 0), Color.FromArgb(255, 255, 255), 0.0f), boardingRampXOffset, airplaneTopWall + 20, 400, 10);
 
             graphics.FillRectangle(new LinearGradientBrush(
                 new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
-                    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(0, 255, 0),
-                Color.FromArgb(255, 255, 255), 30.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(255, 255, 255),
+                Color.FromArgb(255, 0, 0), 90.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
                 550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight));
 
-            //graphics.FillRectangle(new LinearGradientBrush(
-            //    new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
-            //        550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(255, 0, 0),
-            //    Color.FromArgb(255, 0, 0), 0.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
-            //    550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight));
+            graphics.FillRectangle(new LinearGradientBrush(
+                new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                    550 - boardingRampWidth - boardingRampXOffset, 10), Color.FromArgb(0, 255, 0),
+                Color.FromArgb(0, 255, 0), 90.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                550 - boardingRampWidth - boardingRampXOffset, 10));
         }
 
         public Bitmap DrawMap()
@@ -94,7 +91,7 @@ namespace AirplaneLoadingSimulation
 
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
-            DrawPathHints(graphics);
+            //DrawPathHints(graphics);
 
             foreach (var l in Lines)
             {
@@ -232,9 +229,9 @@ namespace AirplaneLoadingSimulation
             Lines.Add(wall1);
             Lines.Add(rampWall1);
             Lines.Add(rampWall2);
-            Lines.Add(pathWall);
-            Lines.Add(pathWall2);
-            Lines.Add(pathWall3);
+            //Lines.Add(pathWall);
+            //Lines.Add(pathWall2);
+            //Lines.Add(pathWall3);
         }
 
         public void AssignSeats()

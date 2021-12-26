@@ -124,7 +124,7 @@ namespace AirplaneLoadingSimulation
 
             if (redIntensity > greenIntensity)
             {
-                return 1.0f + 1.0f*redIntensity;
+                return 1.0f + 10.0f*redIntensity;
             }
 
             if (greenIntensity > redIntensity)

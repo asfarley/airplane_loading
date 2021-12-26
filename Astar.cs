@@ -104,12 +104,9 @@ namespace AStarSharp
                             n.Cost = n.Weight + n.Parent.Cost;
                             OpenList.Add(n);
                             OpenList = OpenList.OrderBy(node => node.F).ToList<Node>();
-                            DrawPath(OpenList, im);
-                            pic.Image = bmp;
-                            //pic.Invalidate();
-                            //pic.Update();
-                            pic.Refresh();
-                            //Application.DoEvents();
+                            //DrawPath(OpenList, im);
+                            //pic.Image = bmp;
+                            //pic.Refresh();
                         }
                     }
                 }
@@ -137,7 +134,7 @@ namespace AStarSharp
             for (int i = 0; i < path.Count; i++)
             {
                 var n = path[i];
-                g.DrawRectangle(Pens.Red, n.Center.X, n.Center.Y, 2, 2);
+                g.DrawRectangle(Pens.DarkOrchid, n.Center.X, n.Center.Y, 2, 2);
             }
         }
 		
