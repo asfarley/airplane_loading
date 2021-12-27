@@ -103,7 +103,7 @@ namespace AirplaneLoadingSimulation
         {
             Bitmap im = new Bitmap(Width, Height);
             Graphics graphics = Graphics.FromImage(im);
-
+            
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
             //DrawPathHints(graphics);
@@ -274,15 +274,15 @@ namespace AirplaneLoadingSimulation
                 pgMap[p] = g;
             }
 
-            //foreach (var p in Passengers)
-            //{
-            //    p.UpdateNavigation(pbMap[p], pgMap[p], box);
-            //}
-
-            Parallel.ForEach(Passengers, p =>
+            foreach (var p in Passengers)
             {
                 p.UpdateNavigation(pbMap[p], pgMap[p], box);
-            });
+            }
+
+            //Parallel.ForEach(Passengers, p =>
+            //{
+            //    p.UpdateNavigation(pbMap[p], pgMap[p], box);
+            //});
         }
 
         public void MoveAll()

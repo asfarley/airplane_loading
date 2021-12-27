@@ -50,7 +50,7 @@ namespace AStarSharp
 
     public class Astar
     {
-        public static bool EIGHTWAY = false;
+        public static bool EIGHTWAY = true;
         List<List<Node>> Grid;
         int GridRows
         {
@@ -80,7 +80,7 @@ namespace AStarSharp
             Stack<Node> Path = new Stack<Node>();
             List<Node> OpenList = new List<Node>();
             List<Node> ClosedList = new List<Node>();
-            List<Node> adjacencies;
+            List<Tuple<Node,bool>> adjacencies;
             Node current = start;
            
             // add start node to Open List
@@ -93,8 +93,7 @@ namespace AStarSharp
                 ClosedList.Add(current);
                 adjacencies = GetAdjacentNodes(current);
 
- 
-                foreach(Node n in adjacencies)
+                foreach((Node n,bool f) in adjacencies)
                 {
                     if (!ClosedList.Contains(n) && n.Walkable)
                     {
@@ -103,11 +102,17 @@ namespace AStarSharp
                             n.Parent = current;
                             n.DistanceToTarget = Math.Abs(n.Position.X - end.Position.X) + Math.Abs(n.Position.Y - end.Position.Y);
                             n.Cost = n.Weight + n.Parent.Cost;
+                            if (!f)
+                            {
+                                //n.Cost += 0.41421f; //Pythagoras
+                                n.Cost += 0.75f; // "pyTHAgoRAS"
+                            }
+
                             OpenList.Add(n);
                             OpenList = OpenList.OrderBy(node => node.F).ToList<Node>();
-                            //DrawPath(OpenList, im);
-                            //pic.Image = bmp;
-                            //pic.Refresh();
+                            DrawPath(OpenList, im);
+                            pic.Image = bmp;
+                            pic.Refresh();
                         }
                     }
                 }
@@ -139,47 +144,63 @@ namespace AStarSharp
             }
         }
 		
-        private List<Node> GetAdjacentNodes(Node n)
+        private List<Tuple<Node,bool>> GetAdjacentNodes(Node n)
         {
-            List<Node> temp = new List<Node>();
+            List<Tuple<Node,bool>> temp = new List<Tuple<Node, bool>>();
 
             int row = (int)n.Position.Y;
             int col = (int)n.Position.X;
 
             if(row + 1 < GridRows)
             {
-                temp.Add(Grid[col][row + 1]);
+                var node = Grid[col][row + 1];
+                var b = true;
+                temp.Add(Tuple.Create(node,b));
             }
             if(row - 1 >= 0)
             {
-                temp.Add(Grid[col][row - 1]);
+                var node = Grid[col][row - 1];
+                var b = true;
+                temp.Add(Tuple.Create(node, b));
             }
             if(col - 1 >= 0)
             {
-                temp.Add(Grid[col - 1][row]);
+                var node = Grid[col - 1][row];
+                var b = true;
+                temp.Add(Tuple.Create(node, b));
             }
             if(col + 1 < GridCols)
             {
-                temp.Add(Grid[col + 1][row]);
+                var node = Grid[col + 1][row];
+                var b = true;
+                temp.Add(Tuple.Create(node, b));
             }
 
             if (EIGHTWAY)
             {
                 if (row + 1 < GridRows && col + 1 < GridCols)
                 {
-                    temp.Add(Grid[col + 1][row + 1]);
+                    var node = Grid[col + 1][row + 1];
+                    var b = false;
+                    temp.Add(Tuple.Create(node, b));
                 }
                 if (row + 1 < GridRows && col - 1 >= 0)
                 {
-                    temp.Add(Grid[col - 1][row + 1]);
+                    var node = Grid[col - 1][row + 1];
+                    var b = false;
+                    temp.Add(Tuple.Create(node, b));
                 }
                 if (col + 1 < GridCols && row - 1 >= 0)
                 {
-                    temp.Add(Grid[col + 1][row - 1]);
+                    var node = Grid[col + 1][row - 1];
+                    var b = false;
+                    temp.Add(Tuple.Create(node, b));
                 }
                 if (col - 1 >= 0 && row - 1 >= 0)
                 {
-                    temp.Add(Grid[col - 1][row - 1]);
+                    var node = Grid[col - 1][row - 1];
+                    var b = false;
+                    temp.Add(Tuple.Create(node, b));
                 }
             }
 
