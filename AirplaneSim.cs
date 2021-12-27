@@ -58,7 +58,7 @@ namespace AirplaneLoadingSimulation
             graphics.FillRectangle(new LinearGradientBrush(
                 new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
                     550 - boardingRampWidth - boardingRampXOffset, 10), Color.FromArgb(0, 255, 0),
-                Color.FromArgb(0, 255, 0), 90.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                Color.FromArgb(255, 255, 255), 0.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
                 550 - boardingRampWidth - boardingRampXOffset, 10));
         }
 
@@ -91,7 +91,7 @@ namespace AirplaneLoadingSimulation
 
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
-            //DrawPathHints(graphics);
+            DrawPathHints(graphics);
 
             foreach (var l in Lines)
             {
@@ -113,12 +113,29 @@ namespace AirplaneLoadingSimulation
 
         private void GeneratePassengers(int nPassengers)
         {
+            var rnd = new Random();
+
             for (int i = 0; i < nPassengers; i++)
             {
                 var p = new Passenger();
                 p.radius = 8;
-                p.locationX = i * 10 + 10;
-                p.locationY = dividerHeight + 50;
+
+                var locationChosen = false;
+                while (!locationChosen)
+                {
+                    var tempX = rnd.Next(10, 490);
+                    var tempY = rnd.Next(dividerHeight + 5, 299);
+
+                    var occupied = Passengers.Any(pass => pass.locationX == tempX && pass.locationY == tempY);
+
+                    if (!occupied)
+                    {
+                        p.locationX = tempX;
+                        p.locationY = tempY;
+                        locationChosen = true;
+                    }
+                }
+
                 p.speed = 1;
                 Passengers.Add(p);
             }
@@ -245,12 +262,27 @@ namespace AirplaneLoadingSimulation
 
         public void UpdateNavigation(Bitmap im, PictureBox box)
         {
+            //Copy bitmap
+            Dictionary<Passenger, Bitmap> pbMap = new Dictionary<Passenger, Bitmap>();
+            Dictionary<Passenger, Graphics> pgMap = new Dictionary<Passenger, Graphics>();
+
             foreach (var p in Passengers)
             {
-                var g = Graphics.FromImage(im);
-                p.UpdateNavigation(im, g, box);
+                Bitmap copy = new Bitmap(im);
+                var g = Graphics.FromImage(copy);
+                pbMap[p] = copy;
+                pgMap[p] = g;
             }
 
+            //foreach (var p in Passengers)
+            //{
+            //    p.UpdateNavigation(pbMap[p], pgMap[p], box);
+            //}
+
+            Parallel.ForEach(Passengers, p =>
+            {
+                p.UpdateNavigation(pbMap[p], pgMap[p], box);
+            });
         }
 
         public void MoveAll()

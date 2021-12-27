@@ -134,7 +134,7 @@ namespace AStarSharp
             for (int i = 0; i < path.Count; i++)
             {
                 var n = path[i];
-                g.DrawRectangle(Pens.DarkOrchid, n.Center.X, n.Center.Y, 2, 2);
+                g.DrawRectangle(Pens.DarkOrchid, n.Center.X, n.Center.Y, 1, 1);
             }
         }
 		

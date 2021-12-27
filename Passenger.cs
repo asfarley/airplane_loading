@@ -24,6 +24,11 @@ namespace AirplaneLoadingSimulation
 
         public Astar Navigation;
 
+        private int impatience = 0;
+        private int impatience_threshold = 20;
+
+        private Random rnd = new Random();
+
         public void Move(List<Passenger> passengers)
         {
             if (pathIndex == path.Count - 1)
@@ -35,7 +40,13 @@ namespace AirplaneLoadingSimulation
 
             if (PositionIsOccupied(passengers, (int) newPosition.Center.X, (int) newPosition.Center.Y))
             {
-                return;
+                impatience += rnd.Next(0, 3);
+
+                if (impatience < impatience_threshold)
+                {
+                    return;
+                }
+
             }
 
             locationX = (int) newPosition.Center.X;
@@ -124,7 +135,7 @@ namespace AirplaneLoadingSimulation
 
             if (redIntensity > greenIntensity)
             {
-                return 1.0f + 10.0f*redIntensity;
+                return 1.0f + 100.0f*redIntensity;
             }
 
             if (greenIntensity > redIntensity)
