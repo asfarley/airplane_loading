@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,19 @@ namespace AirplaneLoadingSimulation
 {
     public partial class Form1 : Form
     {
-        private int nPassengers = 15;
+        private int nPassengers = 1;
         private int nSeats = 100;
         private AirplaneSim Sim;
         private BoardingStrategy strategy = BoardingStrategy.NONE;
+        private Stopwatch BoardingTimer;
+
+        private int nRunsNONEStrategy = 0;
+        private int nRunsFASTStrategy = 0;
+        private int nRunSLOWStrategy = 0;
+
+        private TimeSpan TotalTimeNONE = new TimeSpan(0);
+        private TimeSpan TotalTimeFAST = new TimeSpan(0);
+        private TimeSpan TotalTimeSLOW = new TimeSpan(0);
 
         private Bitmap im;
 
@@ -47,6 +57,48 @@ namespace AirplaneLoadingSimulation
                 if (ActivateSim)
                 {
                     Sim.Update(im);
+
+                    if (Sim.AllSeated)
+                    {
+                        if (!BoardingTimer.IsRunning) return;
+
+                        BoardingTimer.Stop();
+                        boardingTimeTextbox.Text = BoardingTimer.Elapsed.ToString();
+
+                        switch (strategy)
+                        {
+                            case BoardingStrategy.NONE:
+                                nRunsNONEStrategy++;
+                                TotalTimeNONE += BoardingTimer.Elapsed;
+                                break;
+                            case BoardingStrategy.FAST_FIRST:
+                                nRunsFASTStrategy++;
+                                TotalTimeFAST += BoardingTimer.Elapsed;
+                                break;
+                            case BoardingStrategy.SLOW_FIRST:
+                                nRunSLOWStrategy++;
+                                TotalTimeSLOW += BoardingTimer.Elapsed;
+                                break;
+                        }
+
+                        if (nRunsNONEStrategy > 0)
+                        {
+                            var avgBoardingTimeNone = TimeSpan.FromTicks(TotalTimeNONE.Ticks / nRunsNONEStrategy);
+                            boardingTimeNoneTextbox.Text = avgBoardingTimeNone.ToString();
+                        }
+
+                        if (nRunsFASTStrategy > 0)
+                        {
+                            var avgBoardingTimeFast = TimeSpan.FromTicks(TotalTimeFAST.Ticks / nRunsFASTStrategy);
+                            boardingTimeFastTextbox.Text = avgBoardingTimeFast.ToString();
+                        }
+
+                        if (nRunSLOWStrategy > 0)
+                        {
+                            var avgBoardingTimeSlow = TimeSpan.FromTicks(TotalTimeSLOW.Ticks / nRunSLOWStrategy);
+                            boardingTimeSlowTextbox.Text = avgBoardingTimeSlow.ToString();
+                        }
+                    }
                 }
             }
         }
@@ -58,6 +110,7 @@ namespace AirplaneLoadingSimulation
 
         private void button2_Click(object sender, EventArgs e)
         {
+            BoardingTimer = Stopwatch.StartNew();
             ActivateSim = true;
         }
 

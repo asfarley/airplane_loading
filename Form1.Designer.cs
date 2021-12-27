@@ -43,6 +43,12 @@ namespace AirplaneLoadingSimulation
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.numPassengersTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.boardingTimeTextbox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.boardingTimeNoneTextbox = new System.Windows.Forms.TextBox();
+            this.boardingTimeFastTextbox = new System.Windows.Forms.TextBox();
+            this.boardingTimeSlowTextbox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.simulationPictureBox)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -160,7 +166,7 @@ namespace AirplaneLoadingSimulation
             this.numPassengersTextBox.Name = "numPassengersTextBox";
             this.numPassengersTextBox.Size = new System.Drawing.Size(100, 20);
             this.numPassengersTextBox.TabIndex = 9;
-            this.numPassengersTextBox.Text = "10";
+            this.numPassengersTextBox.Text = "1";
             // 
             // label1
             // 
@@ -171,11 +177,63 @@ namespace AirplaneLoadingSimulation
             this.label1.TabIndex = 10;
             this.label1.Text = "PAX";
             // 
+            // boardingTimeTextbox
+            // 
+            this.boardingTimeTextbox.Location = new System.Drawing.Point(111, 410);
+            this.boardingTimeTextbox.Name = "boardingTimeTextbox";
+            this.boardingTimeTextbox.Size = new System.Drawing.Size(100, 20);
+            this.boardingTimeTextbox.TabIndex = 11;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(217, 413);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(71, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Boarding time";
+            // 
+            // boardingTimeNoneTextbox
+            // 
+            this.boardingTimeNoneTextbox.Location = new System.Drawing.Point(517, 359);
+            this.boardingTimeNoneTextbox.Name = "boardingTimeNoneTextbox";
+            this.boardingTimeNoneTextbox.Size = new System.Drawing.Size(100, 20);
+            this.boardingTimeNoneTextbox.TabIndex = 13;
+            // 
+            // boardingTimeFastTextbox
+            // 
+            this.boardingTimeFastTextbox.Location = new System.Drawing.Point(517, 384);
+            this.boardingTimeFastTextbox.Name = "boardingTimeFastTextbox";
+            this.boardingTimeFastTextbox.Size = new System.Drawing.Size(100, 20);
+            this.boardingTimeFastTextbox.TabIndex = 14;
+            // 
+            // boardingTimeSlowTextbox
+            // 
+            this.boardingTimeSlowTextbox.Location = new System.Drawing.Point(517, 408);
+            this.boardingTimeSlowTextbox.Name = "boardingTimeSlowTextbox";
+            this.boardingTimeSlowTextbox.Size = new System.Drawing.Size(100, 20);
+            this.boardingTimeSlowTextbox.TabIndex = 15;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(514, 343);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(92, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Avg boarding time";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(835, 458);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.boardingTimeSlowTextbox);
+            this.Controls.Add(this.boardingTimeFastTextbox);
+            this.Controls.Add(this.boardingTimeNoneTextbox);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.boardingTimeTextbox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numPassengersTextBox);
             this.Controls.Add(this.groupBox1);
@@ -209,6 +267,12 @@ namespace AirplaneLoadingSimulation
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox numPassengersTextBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox boardingTimeTextbox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox boardingTimeNoneTextbox;
+        private System.Windows.Forms.TextBox boardingTimeFastTextbox;
+        private System.Windows.Forms.TextBox boardingTimeSlowTextbox;
+        private System.Windows.Forms.Label label3;
     }
 }
 

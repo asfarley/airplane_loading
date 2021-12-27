@@ -34,6 +34,8 @@ namespace AirplaneLoadingSimulation
         private bool AllSlowSeated => Passengers.Where(p => p.isSlow).All(p => p.seated);
         private bool AllFastSeated => Passengers.Where(p => !p.isSlow).All(p => p.seated);
 
+        public bool AllSeated => Passengers.All(p => p.seated);
+
         private List<Passenger> FastPassengers => Passengers.Where(p => !p.isSlow).ToList();
         private List<Passenger> SlowPassengers => Passengers.Where(p => p.isSlow).ToList();
 
@@ -274,15 +276,15 @@ namespace AirplaneLoadingSimulation
                 pgMap[p] = g;
             }
 
-            foreach (var p in Passengers)
-            {
-                p.UpdateNavigation(pbMap[p], pgMap[p], box);
-            }
-
-            //Parallel.ForEach(Passengers, p =>
+            //foreach (var p in Passengers)
             //{
             //    p.UpdateNavigation(pbMap[p], pgMap[p], box);
-            //});
+            //}
+
+            Parallel.ForEach(Passengers, p =>
+            {
+                p.UpdateNavigation(pbMap[p], pgMap[p], box);
+            });
         }
 
         public void MoveAll()

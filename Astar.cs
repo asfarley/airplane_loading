@@ -110,9 +110,9 @@ namespace AStarSharp
 
                             OpenList.Add(n);
                             OpenList = OpenList.OrderBy(node => node.F).ToList<Node>();
-                            DrawPath(OpenList, im);
-                            pic.Image = bmp;
-                            pic.Refresh();
+                            //DrawPath(OpenList, im);
+                            //pic.Image = bmp;
+                            //pic.Refresh();
                         }
                     }
                 }
