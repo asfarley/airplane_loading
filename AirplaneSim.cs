@@ -11,6 +11,12 @@ using System.Windows.Forms;
 
 namespace AirplaneLoadingSimulation
 {
+    public enum BoardingStrategy
+    {
+        SLOW_FIRST,
+        FAST_FIRST,
+        NONE
+    }
     class AirplaneSim
     {
         //Airplane Simulation class
@@ -23,6 +29,14 @@ namespace AirplaneLoadingSimulation
         public List<Seat> Seats = new List<Seat>();
         public List<Geometry> Lines = new List<Geometry>();
 
+        public BoardingStrategy Strategy = BoardingStrategy.NONE;
+
+        private bool AllSlowSeated => Passengers.Where(p => p.isSlow).All(p => p.seated);
+        private bool AllFastSeated => Passengers.Where(p => !p.isSlow).All(p => p.seated);
+
+        private List<Passenger> FastPassengers => Passengers.Where(p => !p.isSlow).ToList();
+        private List<Passenger> SlowPassengers => Passengers.Where(p => p.isSlow).ToList();
+
         int dividerHeight = 200;
         public int boardingRampXOffset = 40;
         public int boardingRampWidth = 20;
@@ -33,10 +47,11 @@ namespace AirplaneLoadingSimulation
         public int Width;
         public int Height;
 
-        public AirplaneSim(int nPassengers, int nSeats, int width, int height)
+        public AirplaneSim(int nPassengers, int nSeats, int width, int height, BoardingStrategy strat)
         {
             Width = width;
             Height = height;
+            Strategy = strat;
             GenerateSeats(nSeats/4,4);
             GeneratePassengers(nPassengers);
             GenerateGeometry();
@@ -52,7 +67,7 @@ namespace AirplaneLoadingSimulation
             graphics.FillRectangle(new LinearGradientBrush(
                 new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
                     550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight), Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 0, 0), 90.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
+                Color.FromArgb(255, 0, 0), 70.0f), new Rectangle(boardingRampWidth + boardingRampXOffset, dividerHeight,
                 550 - boardingRampWidth - boardingRampXOffset, 300 - dividerHeight));
 
             graphics.FillRectangle(new LinearGradientBrush(
@@ -91,7 +106,7 @@ namespace AirplaneLoadingSimulation
 
             graphics.FillRectangle(Brushes.White, 0, 0, im.Width, im.Height);
 
-            DrawPathHints(graphics);
+            //DrawPathHints(graphics);
 
             foreach (var l in Lines)
             {
@@ -100,7 +115,14 @@ namespace AirplaneLoadingSimulation
 
             foreach (var p in Passengers)
             {
-                graphics.FillEllipse(Brushes.Blue, p.locationX - p.radius/2, p.locationY - p.radius/2, p.radius, p.radius);
+                if (p.seated)
+                {
+                    graphics.FillEllipse(Brushes.DodgerBlue, p.locationX - p.radius / 2, p.locationY - p.radius / 2, p.radius, p.radius);
+                }
+                else
+                {
+                    graphics.FillEllipse(Brushes.Blue, p.locationX - p.radius / 2, p.locationY - p.radius / 2, p.radius, p.radius);
+                }
             }
 
             foreach (var s in Seats)
@@ -136,7 +158,12 @@ namespace AirplaneLoadingSimulation
                     }
                 }
 
-                p.speed = 1;
+                p.speed = rnd.Next(5, 15) / 10.0;
+                if (p.speed < 1.0)
+                {
+                    p.isSlow = true;
+                }
+
                 Passengers.Add(p);
             }
         }
@@ -215,30 +242,6 @@ namespace AirplaneLoadingSimulation
                 y1 = dividerHeight
             };
 
-            var pathWall = new Geometry
-            {
-                x0 = 210,
-                y0 = dividerHeight,
-                x1 = 210,
-                y1 = 299
-            };
-
-            var pathWall2 = new Geometry
-            {
-                x0 = 0,
-                y0 = 260,
-                x1 = 210,
-                y1 = 260
-            };
-
-            var pathWall3 = new Geometry
-            {
-                x0 = 400,
-                y0 = airplaneBottomWall,
-                x1 = 400,
-                y1 = airplaneTopWall
-            };
-
             Lines.Add(window1);
             Lines.Add(window2);
             Lines.Add(window3);
@@ -246,9 +249,6 @@ namespace AirplaneLoadingSimulation
             Lines.Add(wall1);
             Lines.Add(rampWall1);
             Lines.Add(rampWall2);
-            //Lines.Add(pathWall);
-            //Lines.Add(pathWall2);
-            //Lines.Add(pathWall3);
         }
 
         public void AssignSeats()
@@ -287,7 +287,67 @@ namespace AirplaneLoadingSimulation
 
         public void MoveAll()
         {
+            switch (Strategy)
+            {
+                case BoardingStrategy.NONE:
+                    MoveStrategyNone();
+                    break;
+                case BoardingStrategy.FAST_FIRST:
+                    MoveStrategyFastFirst();
+                    break;
+                case BoardingStrategy.SLOW_FIRST:
+                    MoveStrategySlowFirst();
+                    break;
+            }
+        }
+
+        public void MoveStrategyNone()
+        {
             foreach (var p in Passengers)
+            {
+                var listJustThis = new List<Passenger> { p };
+                var otherPassengers = Passengers.Except(listJustThis);
+                p.Move(otherPassengers.ToList());
+            }
+        }
+
+        public void MoveStrategyFastFirst()
+        {
+            foreach (var p in FastPassengers)
+            {
+                var listJustThis = new List<Passenger> { p };
+                var otherPassengers = Passengers.Except(listJustThis);
+                p.Move(otherPassengers.ToList());
+            }
+
+            if (!AllFastSeated)
+            {
+                return;
+            }
+
+            foreach (var p in SlowPassengers)
+            {
+                var listJustThis = new List<Passenger> { p };
+                var otherPassengers = Passengers.Except(listJustThis);
+                p.Move(otherPassengers.ToList());
+            }
+        }
+
+        public void MoveStrategySlowFirst()
+        {
+            foreach (var p in SlowPassengers)
+            {
+                var listJustThis = new List<Passenger> { p };
+                var otherPassengers = Passengers.Except(listJustThis);
+                p.Move(otherPassengers.ToList());
+            }
+
+            if (!AllSlowSeated)
+            {
+                return;
+            }
+
+            foreach (var p in FastPassengers)
             {
                 var listJustThis = new List<Passenger> { p };
                 var otherPassengers = Passengers.Except(listJustThis);

@@ -12,10 +12,10 @@ namespace AirplaneLoadingSimulation
 {
     public partial class Form1 : Form
     {
-        private const int nPassengers = 10;
-        private const int nSeats = 100;
-
-        private AirplaneSim Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);
+        private int nPassengers = 15;
+        private int nSeats = 100;
+        private AirplaneSim Sim;
+        private BoardingStrategy strategy = BoardingStrategy.NONE;
 
         private Bitmap im;
 
@@ -24,6 +24,8 @@ namespace AirplaneLoadingSimulation
         public Form1()
         {
             InitializeComponent();
+            numPassengersTextBox.Text = nPassengers.ToString();
+            Sim = new AirplaneSim(nPassengers, nSeats, 550, 300, strategy);
             im = Sim.DrawMap();
         }
 
@@ -31,6 +33,8 @@ namespace AirplaneLoadingSimulation
         {
             Sim.UpdateNavigation(im, simulationPictureBox);
             NavigationDone = true;
+            im = Sim.DrawSimulationState();
+            simulationPictureBox.Image = im;
         }
 
         private void simulationTick_Tick(object sender, EventArgs e)
@@ -65,8 +69,9 @@ namespace AirplaneLoadingSimulation
         private void button4_Click(object sender, EventArgs e)
         {
             ActivateSim = false;
-            Sim = new AirplaneSim(nPassengers, nSeats, 550, 300);
-            im = Sim.DrawSimulationState();
+            nPassengers = Int32.Parse(numPassengersTextBox.Text);
+            Sim = new AirplaneSim(nPassengers, nSeats, 550, 300, strategy);
+            im = Sim.DrawMap();
             simulationPictureBox.Image = im;
             Sim.UpdateNavigation(im, simulationPictureBox);
         }
@@ -75,6 +80,30 @@ namespace AirplaneLoadingSimulation
         {
             NavigateAndDraw();
             timerNavigation.Enabled = false;
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                strategy = BoardingStrategy.NONE;
+            }
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                strategy = BoardingStrategy.FAST_FIRST;
+            }
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton3.Checked)
+            {
+                strategy = BoardingStrategy.SLOW_FIRST;
+            }
         }
     }
 }

@@ -18,8 +18,9 @@ namespace AirplaneLoadingSimulation
         public int locationX;
         public int locationY;
         public int radius;
-        public int speed;
-        private int pathIndex = 0;
+        public double speed;
+        public bool isSlow = false;
+        private double pathIndex = 0.0;
         private Stack<Node> path;
 
         public Astar Navigation;
@@ -31,12 +32,8 @@ namespace AirplaneLoadingSimulation
 
         public void Move(List<Passenger> passengers)
         {
-            if (pathIndex == path.Count - 1)
-            {
-                seated = true;
-            }
-
-            var newPosition = path.ToArray()[pathIndex];
+            var integerIndex = (int) Math.Floor(pathIndex);
+            var newPosition = path.ToArray()[integerIndex];
 
             if (PositionIsOccupied(passengers, (int) newPosition.Center.X, (int) newPosition.Center.Y))
             {
@@ -46,20 +43,28 @@ namespace AirplaneLoadingSimulation
                 {
                     return;
                 }
+            }
+            else
+            {
+                impatience = 0;
+            }
 
+            if (pathIndex < path.Count - 1.0 - speed)
+            {
+                pathIndex += speed;
+            }
+            else
+            {
+                seated = true;
             }
 
             locationX = (int) newPosition.Center.X;
             locationY = (int) newPosition.Center.Y;
-            if (pathIndex < path.Count - 1)
-            {
-                pathIndex++;
-            }
         }
 
         public bool PositionIsOccupied(List<Passenger> passengers, int x, int y)
         {
-            return passengers.Any(p => !p.seated && Math.Abs(p.locationX - x) < 10 && Math.Abs(p.locationY - y) < 10);
+            return passengers.Any(p => !p.seated && Math.Sqrt(Math.Pow(p.locationX - x, 2) + Math.Pow(p.locationY - y, 2)) < 10);
         }
 
         public void UpdateNavigation(Bitmap im, Graphics g, PictureBox pic)
@@ -67,8 +72,8 @@ namespace AirplaneLoadingSimulation
             var grid = BuildGrid(im);
             Navigation = new Astar(grid);
             pathIndex = 0;
-            var start = new Vector2(locationX, locationY);
-            var end = new Vector2(seat.TargetLocationX, seat.TargetLocationY);
+            var start = new Vector2(2 * locationX, 2 * locationY);
+            var end = new Vector2(2 * seat.TargetLocationX, 2 * seat.TargetLocationY);
 
             Trace.WriteLine("Starting path-planning.");
             var watch = System.Diagnostics.Stopwatch.StartNew();

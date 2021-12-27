@@ -12,7 +12,7 @@ namespace AStarSharp
     public class Node
     {
         // Change this depending on what the desired size is for each element in the grid
-        public static int NODE_SIZE = 1;
+        public static int NODE_SIZE = 2;
         public Node Parent;
         public Vector2 Position;
         public Vector2 Center
@@ -50,6 +50,7 @@ namespace AStarSharp
 
     public class Astar
     {
+        public static bool EIGHTWAY = false;
         List<List<Node>> Grid;
         int GridRows
         {
@@ -160,6 +161,26 @@ namespace AStarSharp
             if(col + 1 < GridCols)
             {
                 temp.Add(Grid[col + 1][row]);
+            }
+
+            if (EIGHTWAY)
+            {
+                if (row + 1 < GridRows && col + 1 < GridCols)
+                {
+                    temp.Add(Grid[col + 1][row + 1]);
+                }
+                if (row + 1 < GridRows && col - 1 >= 0)
+                {
+                    temp.Add(Grid[col - 1][row + 1]);
+                }
+                if (col + 1 < GridCols && row - 1 >= 0)
+                {
+                    temp.Add(Grid[col + 1][row - 1]);
+                }
+                if (col - 1 >= 0 && row - 1 >= 0)
+                {
+                    temp.Add(Grid[col - 1][row - 1]);
+                }
             }
 
             return temp;
